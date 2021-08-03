@@ -1,11 +1,9 @@
 {
   "name": "cryptojs-extension",
-  "version": "0.2.2-dev",
+  "version": "0.2.3-dev",
   "description": "Some additional crypto functions built on top of CryptoJS",
   "main": "build/all.js",
-  "authors": [
-    "artjomb"
-  ],
+  "authors": ["artjomb"],
   "license": "MIT",
   "keywords": [
     "crypto",
@@ -15,22 +13,10 @@
     "cmac",
     "omac",
     "cfb",
-    "cryptojs",
-    "blowfish",
-    "neeva",
-    "tea",
-    "gost28147",
-    "hkdf",
-    "streebog",
-    "spongent"
+    "cryptojs"
   ],
-  "homepage": "https://github.com/artjomb/cryptojs-extension",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test"
-  ],
+  "homepage": "https://github.com/agape-apps/cryptojs-extension",
+  "ignore": ["**/.*", "node_modules", "bower_components", "test"],
   "dependencies": {
     "crypto-js": "^4.0.0"
   }
