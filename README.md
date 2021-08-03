@@ -15,11 +15,11 @@ There is an online calculator that enables you to try out AES-CMAC and AES-SIV i
 
 ## How to build
 
-Make sure you have `npm install -g grunt-cli` installed on your system.
+Make sure you have `yarn global add grunt-cli` installed on your system. (or use npm)
 
 ```
-$ npm install
-$ npm run build
+yarn
+yarn build
 ```
 
 ## How to run tests
@@ -27,27 +27,30 @@ $ npm run build
 Tests are run on the build files, so it is necessary to build them first. Then the tests are invoked through
 
 ```
-npm run test
+yarn test
 ```
 
 ## Usage
 
-This extension library depends on [CryptoJS](https://code.google.com/p/crypto-js/), so you need to load it first.
+This extension library depends on [CryptoJS](https://cryptojs.gitbook.io/docs/), so you need to load it first.
 
 ### AES-CMAC
 
 CMAC is a message authentication code algorithm based on AES-128. The key is expected to be 128-bit or 16 byte.
 
 ```html
-<script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/aes.min.js"
+></script>
 <script type="text/javascript" src="build/cmac.min.js"></script>
 <script type="text/javascript">
-    var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
-    var message = "This is some message";
+  var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
+  var message = 'This is some message';
 
-    var mac = CryptoJS.CMAC(key, message);
+  var mac = CryptoJS.CMAC(key, message);
 
-    console.log(mac.toString()); // Hex-encoded MAC
+  console.log(mac.toString()); // Hex-encoded MAC
 </script>
 ```
 
@@ -57,7 +60,7 @@ CMAC also supports a progressive (streaming) way of calculating the MAC:
 
 ```javascript
 var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
-var message = "This is some message";
+var message = 'This is some message';
 
 var cmac = CryptoJS.algo.CMAC.create(key);
 cmac.update(message.slice(0, 2));
@@ -74,24 +77,32 @@ console.log(mac.toString()); // Hex-encoded MAC
 SIV is an authenticated and deterministic mode of operation for AES. It requires two passes over the plaintext data. It depends internally on AES-CMAC (included in the build file). It works with 256-bit, 384-bit or 512-bit keys. The first half of the key is used for S2V (authentication) and the second half for AES-CTR (encryption).
 
 ```html
-<script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
-<script type="text/javascript" src="lib/cryptojs-mode-ctr.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/aes.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/mode-ctr.min.js"
+></script>
 <script type="text/javascript" src="build/siv.min.js"></script>
 <script type="text/javascript">
-    var key = CryptoJS.enc.Hex.parse('fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff');
-    var message = "This is some secret message";
-    var additionalData = "This is some additional data";
+  var key = CryptoJS.enc.Hex.parse(
+    'fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff'
+  );
+  var message = 'This is some secret message';
+  var additionalData = 'This is some additional data';
 
-    var siv = CryptoJS.SIV.create(key);
-    var ciphertext = siv.encrypt([ additionalData ], message);
+  var siv = CryptoJS.SIV.create(key);
+  var ciphertext = siv.encrypt([additionalData], message);
 
-    var recoveredPlaintext = siv.decrypt([ additionalData ], ciphertext);
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  var recoveredPlaintext = siv.decrypt([additionalData], ciphertext);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 
-    // Without additional data
-    var ciphertext = siv.encrypt(message);
-    var recoveredPlaintext = siv.decrypt(ciphertext);
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  // Without additional data
+  var ciphertext = siv.encrypt(message);
+  var recoveredPlaintext = siv.decrypt(ciphertext);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 </script>
 ```
 
@@ -107,25 +118,31 @@ Notes:
 EAX is a authenticated mode based on AES and CMAC. It requires the use of a nonce, but can be implemented as a single pass (plaintext needs to be passed in only once). It works either with a single key with 128, 192 or 256 bit or with a double sized key where the first half will be used for CMAC and the second half for CTR (actual encryption).
 
 ```html
-<script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
-<script type="text/javascript" src="lib/cryptojs-mode-ctr.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/aes.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/mode-ctr.min.js"
+></script>
 <script type="text/javascript" src="build/eax.min.js"></script>
 <script type="text/javascript">
-    var key = CryptoJS.enc.Hex.parse('fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0');
-    var nonce = CryptoJS.lib.WordArray.random(16);
-    var message = "This is some secret message";
-    var additionalData = "This is some additional (authenticated) data";
+  var key = CryptoJS.enc.Hex.parse('fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0');
+  var nonce = CryptoJS.lib.WordArray.random(16);
+  var message = 'This is some secret message';
+  var additionalData = 'This is some additional (authenticated) data';
 
-    var eax = CryptoJS.EAX.create(key);
-    var ciphertext = eax.encrypt(message, nonce, [ additionalData ]);
+  var eax = CryptoJS.EAX.create(key);
+  var ciphertext = eax.encrypt(message, nonce, [additionalData]);
 
-    var recoveredPlaintext = eax.decrypt(ciphertext, nonce, [ additionalData ]);
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  var recoveredPlaintext = eax.decrypt(ciphertext, nonce, [additionalData]);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 
-    // Without additional data
-    var ciphertext = eax.encrypt(message, nonce);
-    var recoveredPlaintext = eax.decrypt(ciphertext, nonce);
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  // Without additional data
+  var ciphertext = eax.encrypt(message, nonce);
+  var recoveredPlaintext = eax.decrypt(ciphertext, nonce);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 </script>
 ```
 
@@ -134,8 +151,8 @@ It is also possible to use a progressive encryption/decryption:
 ```javascript
 var key = CryptoJS.enc.Hex.parse('fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0');
 var nonce = CryptoJS.lib.WordArray.random(16);
-var message = "This is some secret message";
-var additionalData = "This is some additional (authenticated) data";
+var message = 'This is some secret message';
+var additionalData = 'This is some additional (authenticated) data';
 
 var eax = CryptoJS.EAX.create(key);
 
@@ -143,9 +160,9 @@ var eax = CryptoJS.EAX.create(key);
 eax.updateAAD(additionalData);
 eax.initCrypt(true /* encryption */, nonce);
 
-var ct1 = eax.update("This ");
-var ct2 = eax.update("is some ");
-var ct3 = eax.update("secret message");
+var ct1 = eax.update('This ');
+var ct2 = eax.update('is some ');
+var ct3 = eax.update('secret message');
 var ct4 = eax.finalize();
 
 ct1.concat(ct2);
@@ -159,9 +176,9 @@ var pt1 = eax.update(ct1);
 var pt2 = eax.finalize(ct3);
 
 if (pt2 !== false) {
-    console.log("Valid: " + pt1.concat(pt2).toString(CryptoJS.enc.Utf8));
+  console.log('Valid: ' + pt1.concat(pt2).toString(CryptoJS.enc.Utf8));
 } else {
-    console.log("Authentication tag didn't match");
+  console.log("Authentication tag didn't match");
 }
 ```
 
@@ -174,71 +191,77 @@ CryptoJS's `CFB` implementation doesn't support a custom segment size and only u
 Example usage of `CFBb` without padding:
 
 ```html
-<script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/aes.min.js"
+></script>
 <script type="text/javascript" src="build/mode-cfb-b.min.js"></script>
 <script type="text/javascript">
-    var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
-    var iv = CryptoJS.lib.WordArray.random(128/8);
-    var mode = CryptoJS.mode.CFBb;
-    var padding = {
-        pad: function () {},
-        unpad: function () {}
-    }; // NoPadding
-    var segmentSize = 8; // bits; can also be 1, 2, 4, 16, 32, 64, 128 for AES
+  var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
+  var iv = CryptoJS.lib.WordArray.random(128 / 8);
+  var mode = CryptoJS.mode.CFBb;
+  var padding = {
+    pad: function () {},
+    unpad: function () {},
+  }; // NoPadding
+  var segmentSize = 8; // bits; can also be 1, 2, 4, 16, 32, 64, 128 for AES
 
-    var message = "This is some secret message";
+  var message = 'This is some secret message';
 
-    var encrypted = CryptoJS.AES.encrypt(message, key, {
-        iv: iv,
-        mode: mode,
-        padding: padding,
-        segmentSize: segmentSize
-    });
-    var recoveredPlaintext = CryptoJS.AES.decrypt(encrypted, key, {
-        iv: iv,
-        mode: mode,
-        padding: padding,
-        segmentSize: segmentSize
-    });
+  var encrypted = CryptoJS.AES.encrypt(message, key, {
+    iv: iv,
+    mode: mode,
+    padding: padding,
+    segmentSize: segmentSize,
+  });
+  var recoveredPlaintext = CryptoJS.AES.decrypt(encrypted, key, {
+    iv: iv,
+    mode: mode,
+    padding: padding,
+    segmentSize: segmentSize,
+  });
 
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 </script>
 ```
 
 Example usage of `CFBw` with default PKCS#7 padding:
 
 ```html
-<script type="text/javascript" src="lib/cryptojs-aes.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.0/aes.min.js"
+></script>
 <script type="text/javascript" src="build/mode-cfb-w.min.js"></script>
 <script type="text/javascript">
-    var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
-    var iv = CryptoJS.lib.WordArray.random(128/8);
-    var mode = CryptoJS.mode.CFBw;
-    var segmentSize = 32; // bits; can also be 64 or 128 for AES
+  var key = CryptoJS.enc.Hex.parse('2b7e151628aed2a6abf7158809cf4f3c');
+  var iv = CryptoJS.lib.WordArray.random(128 / 8);
+  var mode = CryptoJS.mode.CFBw;
+  var segmentSize = 32; // bits; can also be 64 or 128 for AES
 
-    var message = "This is some secret message";
+  var message = 'This is some secret message';
 
-    var encrypted = CryptoJS.AES.encrypt(message, key, {
-        iv: iv,
-        mode: mode,
-        segmentSize: segmentSize
-    });
-    var recoveredPlaintext = CryptoJS.AES.decrypt(encrypted, key, {
-        iv: iv,
-        mode: mode,
-        segmentSize: segmentSize
-    });
+  var encrypted = CryptoJS.AES.encrypt(message, key, {
+    iv: iv,
+    mode: mode,
+    segmentSize: segmentSize,
+  });
+  var recoveredPlaintext = CryptoJS.AES.decrypt(encrypted, key, {
+    iv: iv,
+    mode: mode,
+    segmentSize: segmentSize,
+  });
 
-    console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
+  console.log(recoveredPlaintext.toString(CryptoJS.enc.Utf8) === message);
 </script>
 ```
 
 Notes:
 
 - Keep in mind that the standard PKCS#7 padding only works reliably if the block size is a multiple of the block size. Example: `segmentSize = 96` and `blockSize = 128`.
- - Use `NoPadding` for segment sizes of 8 bit or smaller.
- - Otherwise create your own padding.
- - Don't even think about using segment sizes like 40 bit or 96 bit, because that is currently broken.
+- Use `NoPadding` for segment sizes of 8 bit or smaller.
+- Otherwise create your own padding.
+- Don't even think about using segment sizes like 40 bit or 96 bit, because that is currently broken.
 
 ## Notes
 
