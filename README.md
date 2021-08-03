@@ -1,3 +1,5 @@
+## Ready to publish to npm?
+
 # Extension for CryptoJS
 
 This extension adds the following algorithms to CryptoJS:
