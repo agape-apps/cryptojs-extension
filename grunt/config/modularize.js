@@ -5,7 +5,6 @@ var _ = require('lodash');
 var modules = {
   'enc-bin': [],
   'common-bit-ops': [],
-  random: [],
   'mode-cfb-w': ['crypto-js/cipher-core'],
   common: ['common-bit-ops', 'crypto-js/cipher-core'],
   'mode-cfb-b': ['common-bit-ops', 'crypto-js/cipher-core'],
