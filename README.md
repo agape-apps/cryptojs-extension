@@ -34,6 +34,12 @@ yarn test
 
 This extension library depends on [CryptoJS](https://cryptojs.gitbook.io/docs/), so you need to load it first.
 
+## Add to an app
+
+There is no npm module, therefore add it directly from github using the latest tagged version:
+
+yarn add https://github.com/agape-apps/cryptojs-extension.git#0.2.4-siv
+
 ### AES-CMAC
 
 CMAC is a message authentication code algorithm based on AES-128. The key is expected to be 128-bit or 16 byte.
